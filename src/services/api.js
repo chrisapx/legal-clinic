@@ -267,6 +267,19 @@ export const blogAPI = {
 
   deletePost: (id) =>
     api.delete(`/blog-posts/${id}`),
+
+  // View tracking
+  trackView: (postId, timeSpent = null) => {
+    const params = new URLSearchParams();
+    if (timeSpent !== null) params.append('timeSpent', timeSpent);
+    return api.post(`/blog-views/${postId}?${params.toString()}`);
+  },
+
+  getViewCount: (postId) =>
+    api.get(`/blog-views/${postId}/count`),
+
+  getUniqueViewCount: (postId) =>
+    api.get(`/blog-views/${postId}/unique-count`),
 };
 
 // Bookmark API

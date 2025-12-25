@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { blogAPI, bookmarkAPI } from '../../services/api';
+import { useBlogViewTracking } from '../../hooks/useBlogViewTracking';
 import '../../styles/design-system.css';
 import './BlogPost.css';
 
@@ -14,6 +15,9 @@ function BlogPost() {
   const [error, setError] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+
+  // Track view and time spent on this blog post
+  useBlogViewTracking(id, !loading && !!post);
 
   useEffect(() => {
     loadPost();
