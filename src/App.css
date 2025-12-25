@@ -1,0 +1,18 @@
+.App {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
