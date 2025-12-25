@@ -8,29 +8,39 @@ import './BlogList.css';
 function BlogList() {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const pageSize = 12;
 
   const categories = ['All', 'Criminal Law', 'Civil Law', 'Family Law', 'Corporate Law', 'Constitutional Law', 'Property Law'];
 
   useEffect(() => {
     loadPosts();
+  }, [currentPage, selectedCategory, searchTerm]);
+
+  useEffect(() => {
     if (user) {
       loadBookmarks();
     }
   }, [user]);
 
-  useEffect(() => {
-    filterPosts();
-  }, [posts, selectedCategory, searchTerm]);
-
   const loadPosts = async () => {
+    setLoading(true);
     try {
-      const response = await blogAPI.getPublishedPosts();
-      setPosts(response.data || []);
+      const response = await blogAPI.getPublishedPostsPaginated(
+        searchTerm,
+        selectedCategory,
+        currentPage,
+        pageSize
+      );
+      setPosts(response.data?.content || []);
+      setTotalPages(response.data?.totalPages || 0);
+      setTotalElements(response.data?.totalElements || 0);
     } catch (error) {
       console.error('Failed to load posts:', error);
     } finally {
@@ -48,21 +58,14 @@ function BlogList() {
     }
   };
 
-  const filterPosts = () => {
-    let filtered = posts;
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(0);
+  };
 
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(post => post.category === selectedCategory);
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.summary?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredPosts(filtered);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
   };
 
   const handleBookmarkToggle = async (postId) => {
@@ -123,7 +126,7 @@ function BlogList() {
               placeholder="Search articles..."
               className="input"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
             />
           </div>
 
@@ -132,7 +135,7 @@ function BlogList() {
               <button
                 key={category}
                 className={`filter-chip ${selectedCategory === category ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategoryChange(category)}
               >
                 {category}
               </button>
@@ -143,14 +146,14 @@ function BlogList() {
         {/* Results Info */}
         <div className="results-info">
           <p>
-            {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'}
+            {totalElements} {totalElements === 1 ? 'article' : 'articles'}
             {selectedCategory !== 'All' && ` in ${selectedCategory}`}
             {searchTerm && ` matching "${searchTerm}"`}
           </p>
         </div>
 
         {/* Blog Grid */}
-        {filteredPosts.length === 0 ? (
+        {posts.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📝</div>
             <h3>No Articles Found</h3>
@@ -166,8 +169,9 @@ function BlogList() {
             </button>
           </div>
         ) : (
-          <div className="blog-grid">
-            {filteredPosts.map((post) => (
+          <>
+            <div className="blog-grid">
+              {posts.map((post) => (
               <article key={post.id} className="card blog-card">
                 {post.imageUrl && (
                   <div className="blog-card-image">
@@ -212,7 +216,33 @@ function BlogList() {
                 </div>
               </article>
             ))}
-          </div>
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                  disabled={currentPage === 0}
+                >
+                  ← Previous
+                </button>
+
+                <div className="pagination-info">
+                  <span>Page {currentPage + 1} of {totalPages}</span>
+                </div>
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

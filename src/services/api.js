@@ -238,6 +238,24 @@ export const blogAPI = {
   getPostsByCategory: (category) =>
     api.get(`/blog-posts/category/${category}`),
 
+  // Paginated endpoints
+  getPublishedPostsPaginated: (search = '', category = '', page = 0, size = 10) => {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (category && category !== 'All') params.append('category', category);
+    params.append('page', page);
+    params.append('size', size);
+    return api.get(`/blog-posts/published/paginated?${params.toString()}`);
+  },
+
+  getAllPostsPaginated: (search = '', page = 0, size = 10) => {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    params.append('page', page);
+    params.append('size', size);
+    return api.get(`/blog-posts/all/paginated?${params.toString()}`);
+  },
+
   updatePost: (id, postData) =>
     api.put(`/blog-posts/${id}`, postData),
 

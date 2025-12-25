@@ -9,22 +9,34 @@ function AdminBlog() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const pageSize = 20;
 
   useEffect(() => {
     loadPosts();
-  }, []);
+  }, [currentPage, searchTerm]);
 
   const loadPosts = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await blogAPI.getAllPosts();
-      setPosts(response.data || []);
+      const response = await blogAPI.getAllPostsPaginated(searchTerm, currentPage, pageSize);
+      setPosts(response.data?.content || []);
+      setTotalPages(response.data?.totalPages || 0);
+      setTotalElements(response.data?.totalElements || 0);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
   };
 
   const handlePublish = async (id) => {
@@ -76,10 +88,20 @@ function AdminBlog() {
 
       {error && <div className="error-alert">{error}</div>}
 
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search blog posts..."
+          className="search-input"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+      </div>
+
       <div className="stats-row">
         <div className="stat-box">
-          <div className="stat-value">{posts.length}</div>
-          <div className="stat-label">Total</div>
+          <div className="stat-value">{totalElements}</div>
+          <div className="stat-label">Total {searchTerm ? 'Found' : 'Posts'}</div>
         </div>
         <div className="stat-box">
           <div className="stat-value">{posts.filter(p => p.published).length}</div>
@@ -91,11 +113,11 @@ function AdminBlog() {
         </div>
         <div className="stat-box">
           <div className="stat-value">{posts.reduce((sum, p) => sum + (p.viewCount || 0), 0)}</div>
-          <div className="stat-label">Views</div>
+          <div className="stat-label">Views (Page)</div>
         </div>
       </div>
 
-      {posts.length === 0 ? (
+      {posts.length === 0 && !loading ? (
         <div className="empty-state-box">
           <p>No blog posts yet. Create your first post!</p>
           <Link to="/admin/blog/new" className="btn-new">Create Post</Link>
@@ -168,6 +190,31 @@ function AdminBlog() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination-controls">
+              <button
+                className="btn-secondary"
+                onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                disabled={currentPage === 0}
+              >
+                ← Previous
+              </button>
+
+              <span className="page-info">
+                Page {currentPage + 1} of {totalPages} ({totalElements} total)
+              </span>
+
+              <button
+                className="btn-secondary"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                disabled={currentPage >= totalPages - 1}
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

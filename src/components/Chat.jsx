@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { chatAPI, conversationAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './Chat.css';
@@ -14,7 +15,25 @@ function Chat() {
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
 
-  const userId = user?.id || 1;
+  // Require authentication
+  if (!user) {
+    return (
+      <div className="chat-container">
+        <div className="chat-auth-required">
+          <div className="auth-prompt">
+            <h1>🔒 Authentication Required</h1>
+            <p>Please log in to access the Legal Chat Assistant</p>
+            <div className="auth-buttons">
+              <Link to="/login" className="btn btn-primary">Log In</Link>
+              <Link to="/register" className="btn btn-secondary">Sign Up</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const userId = user.id;
 
   useEffect(() => {
     loadConversations();
