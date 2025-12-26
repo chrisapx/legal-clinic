@@ -18,7 +18,7 @@ function Navbar() {
       <div className="container navbar-container">
         {/* Logo */}
         <Link to="/blog" className="navbar-logo">
-          ⚖️ <span className="gradient-text">LegalConnect</span>
+          ⚖️ <span className="gradient-text">Legal Clinic Uganda</span>
         </Link>
 
         {/* Mobile Menu Toggle */}
@@ -36,13 +36,10 @@ function Navbar() {
             📚 Articles
           </Link>
 
-          <Link
-            to="/chat"
-            className={`nav-link ${isActive('/chat') ? 'active' : ''}`}
-            onClick={() => setMenuOpen(false)}
-          >
-            💬 Legal Chat
-          </Link>
+          <div className="nav-link disabled nav-link-with-badge">
+            <span>💬 Legal Chat</span>
+            <span className="badge badge-unavailable">Currently Unavailable</span>
+          </div>
 
           {/* Admin-only link */}
           {isAdmin && (

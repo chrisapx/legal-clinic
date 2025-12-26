@@ -37,9 +37,12 @@
   border-radius: var(--radius);
   transition: all var(--transition-fast);
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
-.nav-link:hover {
+.nav-link:not(.disabled):hover {
   background: var(--gray-100);
   color: var(--primary-600);
 }
@@ -47,6 +50,41 @@
 .nav-link.active {
   background: var(--primary-50);
   color: var(--primary-700);
+}
+
+.nav-link.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.nav-link-with-badge {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.badge-unavailable {
+  background: var(--warning-50);
+  color: var(--warning-600);
+  padding: 1px 3px;
+  font-size: 4px;
+  border-radius: 2px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+  line-height: 1;
+}
+
+.badge-coming-soon {
+  background: var(--primary-50);
+  color: var(--primary-600);
+  padding: 2px 8px;
+  font-size: 0.4rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .admin-link {

@@ -64,7 +64,7 @@ function Login() {
         <div className="auth-header">
           <div className="auth-logo">⚖️</div>
           <h1>Welcome Back</h1>
-          <p>Sign in to your account</p>
+          <p>Sign in to Legal Clinic Uganda</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}

@@ -15,6 +15,25 @@ function Chat() {
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
 
+  // Feature currently unavailable
+  return (
+    <div className="chat-container">
+      <div className="chat-auth-required">
+        <div className="auth-prompt">
+          <div className="unavailable-icon">💬</div>
+          <h1>Chat Feature Currently Unavailable</h1>
+          <p>We're working hard to bring you our AI-powered legal chat assistant.</p>
+          <p>This feature will be available soon!</p>
+          <div className="auth-buttons">
+            <Link to="/blog" className="btn btn-primary">
+              Browse Articles
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   // Require authentication
   if (!user) {
     return (

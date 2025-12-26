@@ -22,13 +22,13 @@ function AdminLayout({ children }) {
   };
 
   const menuItems = [
-    { path: '/admin', label: 'Dashboard', icon: '📊' },
-    { path: '/admin/blog', label: 'Blog Posts', icon: '📝' },
-    { path: '/admin/users', label: 'Users', icon: '👥' },
-    { path: '/admin/lawyers', label: 'Lawyers', icon: '⚖️' },
-    { path: '/admin/firms', label: 'Legal Firms', icon: '🏢' },
-    { path: '/admin/documents', label: 'Documents', icon: '📄' },
-    { path: '/admin/questions', label: 'Q&A Forum', icon: '💬' },
+    { path: '/admin', label: 'Dashboard', icon: '📊', enabled: true },
+    { path: '/admin/blog', label: 'Blog Posts', icon: '📝', enabled: true },
+    { path: '/admin/users', label: 'Users', icon: '👥', enabled: true },
+    { path: '/admin/lawyers', label: 'Lawyers', icon: '⚖️', enabled: false },
+    { path: '/admin/firms', label: 'Legal Firms', icon: '🏢', enabled: false },
+    { path: '/admin/documents', label: 'Documents', icon: '📄', enabled: false },
+    { path: '/admin/questions', label: 'Q&A Forum', icon: '💬', enabled: false },
   ];
 
   return (
@@ -36,19 +36,33 @@ function AdminLayout({ children }) {
       <aside className="admin-sidebar">
         <div className="sidebar-header">
           <div className="sidebar-logo">⚖️</div>
-          <h2>Admin Panel</h2>
+          <h2>Legal Clinic Uganda</h2>
+          <p className="sidebar-subtitle">Admin Panel</p>
         </div>
 
         <nav className="sidebar-nav">
           {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              <span className="nav-label">{item.label}</span>
-            </Link>
+            item.enabled ? (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
+              </Link>
+            ) : (
+              <div
+                key={item.path}
+                className="nav-item disabled"
+              >
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">
+                  {item.label}
+                  <span className="coming-soon-badge">Coming Soon</span>
+                </span>
+              </div>
+            )
           ))}
         </nav>
 

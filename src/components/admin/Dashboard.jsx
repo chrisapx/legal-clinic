@@ -60,36 +60,42 @@ function Dashboard() {
       value: stats.totalUsers,
       icon: '👥',
       color: 'primary',
-      link: '/admin/users'
+      link: '/admin/users',
+      enabled: true
     },
     {
       title: 'Blog Posts',
       value: stats.totalPosts,
       icon: '📝',
       color: 'accent',
-      link: '/admin/blog'
+      link: '/admin/blog',
+      enabled: true
     },
     {
       title: 'Conversations',
       value: stats.totalConversations,
       icon: '💬',
       color: 'success',
-      link: '/admin'
+      link: '/admin',
+      enabled: false,
+      badge: 'Coming Soon'
     },
     {
       title: 'Questions',
       value: '0',
       icon: '❓',
       color: 'warning',
-      link: '/admin/questions'
+      link: '/admin/questions',
+      enabled: false,
+      badge: 'Coming Soon'
     }
   ];
 
   const quickActions = [
-    { label: 'Create Blog Post', icon: '➕', link: '/admin/blog/new', color: 'primary' },
-    { label: 'Manage Users', icon: '👥', link: '/admin/users', color: 'accent' },
-    { label: 'View Documents', icon: '📄', link: '/admin/documents', color: 'success' },
-    { label: 'Q&A Forum', icon: '💬', link: '/admin/questions', color: 'warning' }
+    { label: 'Create Blog Post', icon: '➕', link: '/admin/blog/new', color: 'primary', enabled: true },
+    { label: 'Manage Users', icon: '👥', link: '/admin/users', color: 'accent', enabled: true },
+    { label: 'View Documents', icon: '📄', link: '/admin/documents', color: 'success', enabled: false },
+    { label: 'Q&A Forum', icon: '💬', link: '/admin/questions', color: 'warning', enabled: false }
   ];
 
   if (loading) {
@@ -124,18 +130,34 @@ function Dashboard() {
 
       <div className="stats-grid">
         {statCards.map((stat, index) => (
-          <Link
-            key={index}
-            to={stat.link}
-            className={`stat-card stat-card-${stat.color}`}
-          >
-            <div className="stat-icon">{stat.icon}</div>
-            <div className="stat-content">
-              <p className="stat-title">{stat.title}</p>
-              <h3 className="stat-value">{stat.value}</h3>
+          stat.enabled ? (
+            <Link
+              key={index}
+              to={stat.link}
+              className={`stat-card stat-card-${stat.color}`}
+            >
+              <div className="stat-icon">{stat.icon}</div>
+              <div className="stat-content">
+                <p className="stat-title">{stat.title}</p>
+                <h3 className="stat-value">{stat.value}</h3>
+              </div>
+              <div className="stat-arrow">→</div>
+            </Link>
+          ) : (
+            <div
+              key={index}
+              className={`stat-card stat-card-${stat.color} disabled`}
+            >
+              <div className="stat-icon">{stat.icon}</div>
+              <div className="stat-content">
+                <p className="stat-title">
+                  {stat.title}
+                  {stat.badge && <span className="stat-badge">{stat.badge}</span>}
+                </p>
+                <h3 className="stat-value">{stat.value}</h3>
+              </div>
             </div>
-            <div className="stat-arrow">→</div>
-          </Link>
+          )
         ))}
       </div>
 
@@ -146,14 +168,27 @@ function Dashboard() {
           </div>
           <div className="quick-actions-grid">
             {quickActions.map((action, index) => (
-              <Link
-                key={index}
-                to={action.link}
-                className={`quick-action-card quick-action-${action.color}`}
-              >
-                <div className="action-icon">{action.icon}</div>
-                <span className="action-label">{action.label}</span>
-              </Link>
+              action.enabled ? (
+                <Link
+                  key={index}
+                  to={action.link}
+                  className={`quick-action-card quick-action-${action.color}`}
+                >
+                  <div className="action-icon">{action.icon}</div>
+                  <span className="action-label">{action.label}</span>
+                </Link>
+              ) : (
+                <div
+                  key={index}
+                  className={`quick-action-card quick-action-${action.color} disabled`}
+                >
+                  <div className="action-icon">{action.icon}</div>
+                  <span className="action-label">
+                    {action.label}
+                    <span className="quick-action-badge">Coming Soon</span>
+                  </span>
+                </div>
+              )
             ))}
           </div>
         </div>
@@ -193,7 +228,7 @@ function Dashboard() {
           <div className="info-icon">💡</div>
           <div className="info-content">
             <h3>Getting Started</h3>
-            <p>Explore the admin panel to manage users, create blog posts, and handle legal documentation.</p>
+            <p>Manage Legal Clinic Uganda's platform: users, blog posts, legal documentation, and more.</p>
           </div>
         </div>
       </div>
