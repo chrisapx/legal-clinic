@@ -7,7 +7,14 @@ function AdminLayout({ children }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const isActive = (path) => location.pathname.startsWith(path);
+  const isActive = (path) => {
+    // Exact match for dashboard
+    if (path === '/admin') {
+      return location.pathname === '/admin' || location.pathname === '/admin/';
+    }
+    // For other routes, check if pathname starts with the path
+    return location.pathname.startsWith(path);
+  };
 
   const handleLogout = () => {
     logout();

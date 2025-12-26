@@ -14,6 +14,7 @@ import BlogPost from './components/blog/BlogPost';
 import AdminBlog from './components/blog/AdminBlog';
 import BlogForm from './components/blog/BlogForm';
 import UserManagement from './components/admin/UserManagement';
+import Dashboard from './components/admin/Dashboard';
 import './styles/design-system.css';
 import './App.css';
 
@@ -84,7 +85,7 @@ function App() {
               <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
                 <AdminLayout>
                   <Routes>
-                    <Route path="/" element={<div>Admin Dashboard</div>} />
+                    <Route path="/" element={<Dashboard />} />
                     <Route path="/blog" element={<AdminBlog />} />
                     <Route path="/blog/new" element={<BlogForm />} />
                     <Route path="/blog/edit/:id" element={<BlogForm />} />
